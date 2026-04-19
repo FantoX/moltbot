@@ -7,6 +7,13 @@ import {
   MEDIA_FFMPEG_TIMEOUT_MS,
   MEDIA_FFPROBE_TIMEOUT_MS,
 } from "./ffmpeg-limits.js";
+import ffmpegStatic from "ffmpeg-static";
+import ffprobeInstaller from "@ffprobe-installer/ffprobe";
+
+process.env.FFMPEG_PATH = (ffmpegStatic as unknown as string);
+if (ffprobeInstaller?.path) {
+  process.env.FFPROBE_PATH = ffprobeInstaller.path;
+}
 
 const execFileAsync = promisify(execFile);
 
@@ -41,8 +48,9 @@ function requireSystemBin(name: string): string {
 }
 
 export async function runFfprobe(args: string[], options?: MediaExecOptions): Promise<string> {
+  const binPath = ffprobeInstaller?.path ?? requireSystemBin("ffprobe");
   const { stdout } = await execFileAsync(
-    requireSystemBin("ffprobe"),
+    binPath,
     args,
     resolveExecOptions(MEDIA_FFPROBE_TIMEOUT_MS, options),
   );
@@ -50,8 +58,9 @@ export async function runFfprobe(args: string[], options?: MediaExecOptions): Pr
 }
 
 export async function runFfmpeg(args: string[], options?: MediaExecOptions): Promise<string> {
+  const binPath = (ffmpegStatic as unknown as string) ?? requireSystemBin("ffmpeg");
   const { stdout } = await execFileAsync(
-    requireSystemBin("ffmpeg"),
+    binPath,
     args,
     resolveExecOptions(MEDIA_FFMPEG_TIMEOUT_MS, options),
   );

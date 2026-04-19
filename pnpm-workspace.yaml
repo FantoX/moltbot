@@ -41,6 +41,8 @@ onlyBuiltDependencies:
   - node-llama-cpp
   - protobufjs
   - sharp
+  - ffmpeg-static
+  - "@ffprobe-installer/ffprobe"
 
 ignoredBuiltDependencies:
   - koffi
